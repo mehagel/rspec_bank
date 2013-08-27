@@ -2,7 +2,8 @@ class Account
   attr_reader :transactions
 
   def initialize(acct_number, starting_balance = 0)
-    validate_number(acct_number)
+    validate_account(acct_number)
+    validate_amount(starting_balance)
 
     @acct_number  = acct_number
     @transactions = [ starting_balance ]
@@ -18,7 +19,7 @@ class Account
   end
 
   def deposit!(amount) 
-    raise NegativeDepositError if amount < 0 
+    validate_amount(amount)
     add_transaction(amount)
 
     balance
@@ -33,10 +34,14 @@ class Account
 
 private
 
-  def validate_number(number)
-    unless valid_number?(number)
+  def validate_account(number)
+    unless number.class == String && valid_number?(number) 
       raise InvalidAccountNumberError
     end
+  end
+
+  def validate_amount(amount)
+   raise NegativeDepositError if amount < 0 
   end
 
   def valid_number?(number)
